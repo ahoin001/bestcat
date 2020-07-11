@@ -1,26 +1,30 @@
+
 // ****************************************************************
 //? CONNECT TO DOM  & INITIALIZE VARIABLES
 // ****************************************************************
 
-let picContainer = document.querySelector("div.pic-container")
-let pic = document.querySelector("img")
+let randomCatContainer = document.querySelector("div.pic-container")
+let randomCatPic = document.querySelector("img")
 
-let catID;
-const sub_id = "User-CatLady99";
+let lovedCatContainer = document.querySelector("div.loved-container")
+let lovedCatPic = document.querySelector("img")
+
+let catImageID;
+const sub_id = "CatLady99";
 
 
 // ****************************************************************
 //? API INTERACTIONs
 // ****************************************************************
 
-const fetchCatApi = async (requestType = "GET") => {
+const fetchCatApi = async (url = "https://api.thecatapi.com/v1/images/search") => {
 
     let response = await fetch(
-        "https://api.thecatapi.com/v1/images/search",
+        url,
         {
-            method: requestType,
+            method: "GET",
             headers: {
-                "X-Auth-Token": "5d07ae96-a25c-474e-94f0-5c6bd5e5a60b",
+                'x-api-key': '5d07ae96-a25c-474e-94f0-5c6bd5e5a60b',
                 "Content-Type": "application/json"
             }
         })
@@ -33,6 +37,19 @@ const fetchCatApi = async (requestType = "GET") => {
 
 }
 
+const getVotedCats = async () => {
+
+    console.log(`Going to make get votes with sub_id: https://api.thecatapi.com/v1/votes?sub_id=${sub_id}`)
+    console.log(`Version 2 of call: https://api.thecatapi.com/v1/votes?sub_id`)
+
+    // const apiResponse = await fetchCatApi(`https://api.thecatapi.com/v1/votes?sub_id=${sub_id}`)
+    const apiResponse = await fetchCatApi(`https://api.thecatapi.com/v1/votes`)
+
+    console.log('Voted Cats: ', apiResponse)
+
+
+
+}
 
 const postVoteToCatApi = async (requestBody) => {
 
@@ -43,15 +60,15 @@ const postVoteToCatApi = async (requestBody) => {
             method: "POST",
             body: requestBody,
             headers: {
-                "X-Auth-Token": "5d07ae96-a25c-474e-94f0-5c6bd5e5a60b",
                 "Content-Type": "application/json"
             }
         }
+
     )
 
     let dataParsed = await response.json();
 
-    console.log(dataParsed);
+    console.log('Post Request:', dataParsed);
 
 }
 
@@ -59,47 +76,50 @@ const postVoteToCatApi = async (requestBody) => {
 //? Utility FUNCTIONS
 // ****************************************************************
 
-const setRandomCat = async (requestType) => {
+const setRandomCat = async () => {
 
-    const apiResponse = await fetchCatApi(requestType)
+    const apiResponse = await fetchCatApi()
 
     // console.log(apiResponse)
 
-    pic.setAttribute("src", apiResponse[0].url)
+    randomCatPic.setAttribute("src", apiResponse[0].url)
 
-    catID = apiResponse[0].id;
+    catImageID = apiResponse[0].id;
 
-    // console.log(catID)
+    
 
 }
 
-const lovedCat = async (catId) => {
+const lovedCat = async (catImageId) => {
 
     let requestBodyVote = {
-        image_id: catId,
+        image_id: catImageId,
         sub_id,
         value: 1
     }
 
+    console.log('Your cat vote: ', requestBodyVote)
+
     await postVoteToCatApi(JSON.stringify(requestBodyVote))
 
     setRandomCat()
-
+    getVotedCats();
 }
 
-const nopedCat = async (catId) => {
+const nopedCat = async (catImageId) => {
 
     let requestBodyVote = {
-        image_id: catId,
+        image_id: catImageId,
         sub_id,
         value: 0
     }
 
     await postVoteToCatApi(JSON.stringify(requestBodyVote))
 
-    setRandomCat()
+    await setRandomCat()
 
 }
+
 
 
 
@@ -108,7 +128,3 @@ const nopedCat = async (catId) => {
 // ****************************************************************
 
 setRandomCat()
-
-
-
-
