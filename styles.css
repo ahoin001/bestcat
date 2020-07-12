@@ -16,7 +16,7 @@ body {
 img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  /* object-fit: cover; */
 }
 
 .buttons-container {
@@ -30,11 +30,26 @@ img {
   padding: 12px;
 }
 
+/* *********************************** */
+
 .loved-container {
   margin: 40px auto;
+
+  text-align: center;
+
+  font-size: 3rem;
 
   width: 700px;
   height: 600px;
 }
 
+.loved-cat-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
+.fav-cat {
+  width: 100%;
+  height: 500px;
+}

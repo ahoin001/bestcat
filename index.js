@@ -7,27 +7,46 @@ let randomCatContainer = document.querySelector("div.pic-container")
 let randomCatPic = document.querySelector("img")
 
 let lovedCatContainer = document.querySelector("div.loved-container")
-let lovedCatPic = document.querySelector("img")
+let lovedCatPicsList = document.querySelector(".loved-cat-list")
 
 let catImageID;
-const sub_id = "CatLady99";
+let lovedCats = [];
+const sub_id = "CatLady1";
 
 
 // ****************************************************************
 //? API INTERACTIONs
 // ****************************************************************
 
-const fetchCatApi = async (url = "https://api.thecatapi.com/v1/images/search") => {
+const fetchCatApi = async (url = "https://api.thecatapi.com/v1/images/search", requestType = "GET", requestBody) => {
 
-    let response = await fetch(
-        url,
-        {
-            method: "GET",
-            headers: {
-                'x-api-key': '5d07ae96-a25c-474e-94f0-5c6bd5e5a60b',
-                "Content-Type": "application/json"
-            }
-        })
+    let response;
+
+    if (requestType === "GET") {
+        response = await fetch(
+            url,
+            {
+                method: requestType,
+                headers: {
+                    'x-api-key': '5d07ae96-a25c-474e-94f0-5c6bd5e5a60b',
+                    "Content-Type": "application/json"
+                }
+            })
+    } else {
+
+        response = await fetch(
+            url,
+            {
+                method: requestType,
+                body: requestBody,
+                headers: {
+                    'x-api-key': '5d07ae96-a25c-474e-94f0-5c6bd5e5a60b',
+                    "Content-Type": "application/json"
+                }
+            })
+
+    }
+
 
     let dataParsed = await response.json();
 
@@ -37,40 +56,6 @@ const fetchCatApi = async (url = "https://api.thecatapi.com/v1/images/search") =
 
 }
 
-const getVotedCats = async () => {
-
-    console.log(`Going to make get votes with sub_id: https://api.thecatapi.com/v1/votes?sub_id=${sub_id}`)
-    console.log(`Version 2 of call: https://api.thecatapi.com/v1/votes?sub_id`)
-
-    // const apiResponse = await fetchCatApi(`https://api.thecatapi.com/v1/votes?sub_id=${sub_id}`)
-    const apiResponse = await fetchCatApi(`https://api.thecatapi.com/v1/votes`)
-
-    console.log('Voted Cats: ', apiResponse)
-
-
-
-}
-
-const postVoteToCatApi = async (requestBody) => {
-
-    let response = await fetch(
-        "https://api.thecatapi.com/v1/votes",
-
-        {
-            method: "POST",
-            body: requestBody,
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }
-
-    )
-
-    let dataParsed = await response.json();
-
-    console.log('Post Request:', dataParsed);
-
-}
 
 // ****************************************************************
 //? Utility FUNCTIONS
@@ -80,27 +65,32 @@ const setRandomCat = async () => {
 
     const apiResponse = await fetchCatApi()
 
-    // console.log(apiResponse)
-
     randomCatPic.setAttribute("src", apiResponse[0].url)
 
     catImageID = apiResponse[0].id;
 
-    
+
+}
+
+const postVoteToCatApi = async (requestBody) => {
+
+    let response = await fetchCatApi("https://api.thecatapi.com/v1/votes", "POST", requestBody)
+
+    console.log('Post Request:', response);
 
 }
 
 const lovedCat = async (catImageId) => {
 
-    let requestBodyVote = {
+    let requestBodyVote = JSON.stringify({
         image_id: catImageId,
         sub_id,
         value: 1
-    }
+    })
 
     console.log('Your cat vote: ', requestBodyVote)
 
-    await postVoteToCatApi(JSON.stringify(requestBodyVote))
+    await postVoteToCatApi(requestBodyVote)
 
     setRandomCat()
     getVotedCats();
@@ -120,7 +110,29 @@ const nopedCat = async (catImageId) => {
 
 }
 
+const getVotedCats = async () => {
 
+    const catsThatWereLoved = await fetchCatApi(`https://api.thecatapi.com/v1/votes?sub_id=${sub_id}`)
+
+    catsThatWereLoved.forEach(async (catObject) => {
+
+        const catID = catObject.image_id;
+
+        const catImageInfo = await fetchCatApi(`https://api.thecatapi.com/v1/images/${catID}`)
+
+        // console.log('******', catImageInfo)
+
+        let lovedCatImg = document.createElement("img");
+
+        lovedCatImg.setAttribute("src", catImageInfo.url)
+        lovedCatImg.setAttribute("class", "fav-cat")
+
+        lovedCatPicsList.appendChild(lovedCatImg)
+
+    });
+
+
+}
 
 
 // ****************************************************************
