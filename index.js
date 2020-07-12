@@ -11,7 +11,10 @@ let lovedCatPicsList = document.querySelector(".loved-cat-list")
 
 let catImageID;
 let lovedCats = [];
-const sub_id = "CatLady1";
+
+// console.log(Math.floor(Math.random() * 300000))
+
+const sub_id = `CatLady${Math.floor(Math.random() * 300000)}`;
 
 
 // ****************************************************************
