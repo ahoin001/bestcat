@@ -8,6 +8,8 @@ let randomCatPic = document.querySelector("img")
 let lovedCatContainer = document.querySelector("div.loved-container")
 let lovedCatPicsList = document.querySelector(".loved-cat-list")
 
+let voteButtons = document.querySelectorAll(".vote-bttn")
+
 let catImageID;
 let lovedCats = [];
 
@@ -84,6 +86,10 @@ const postVoteToCatApi = async (requestBody) => {
 
 const lovedCat = async (catImageId) => {
 
+    voteButtons.forEach(bttn => {
+        bttn.disabled = true;
+    })
+
     let requestBodyVote = JSON.stringify({
         image_id: catImageId,
         sub_id,
@@ -94,11 +100,22 @@ const lovedCat = async (catImageId) => {
 
     await postVoteToCatApi(requestBodyVote)
 
-    setRandomCat()
-    getVotedCats();
+    await setRandomCat()
+    
+    await getVotedCats();
+
+    voteButtons.forEach(bttn => {
+        bttn.disabled = false;
+    })
+
+
 }
 
 const nopedCat = async (catImageId) => {
+
+    voteButtons.forEach(bttn => {
+        bttn.disabled = true;
+    })
 
     let requestBodyVote = {
         image_id: catImageId,
@@ -110,34 +127,39 @@ const nopedCat = async (catImageId) => {
 
     await setRandomCat()
 
+    voteButtons.forEach(bttn => {
+        bttn.disabled = false;
+    })
+
 }
 
 const getVotedCats = async () => {
 
     const catsThatWereVoted = await fetchCatApi(`https://api.thecatapi.com/v1/votes?sub_id=${sub_id}`)
+    // const catsThatWereVoted = await fetchCatApi(`https://api.thecatapi.com/v1/votes`)
 
     console.log(`############`, catsThatWereVoted)
 
     const recentCat = catsThatWereVoted.pop()
 
-        if (recentCat.value === 1) {
+    if (recentCat.value === 1) {
 
-            const catID = recentCat.image_id;
+        const catID = recentCat.image_id;
 
-            const catImageInfo = await fetchCatApi(`https://api.thecatapi.com/v1/images/${catID}`)
+        const catImageInfo = await fetchCatApi(`https://api.thecatapi.com/v1/images/${catID}`)
 
-            // console.log('******', catImageInfo)
+        // console.log('******', catImageInfo)
 
-            let lovedCatImg = document.createElement("img");
+        let lovedCatImg = document.createElement("img");
 
-            lovedCatImg.setAttribute("src", catImageInfo.url)
-            lovedCatImg.setAttribute("class", "fav-cat")
+        lovedCatImg.setAttribute("src", catImageInfo.url)
+        lovedCatImg.setAttribute("class", "fav-cat")
 
-            lovedCatPicsList.appendChild(lovedCatImg)
+        lovedCatPicsList.appendChild(lovedCatImg)
 
-        } else {
-            console.log(`Cat not loved :( : ${recentCat} `)
-        }
+    } else {
+        console.log(`Cat not loved :( : ${recentCat} `)
+    }
 
 
 }
