@@ -1,4 +1,3 @@
-
 // ****************************************************************
 //? CONNECT TO DOM  & INITIALIZE VARIABLES
 // ****************************************************************
@@ -12,9 +11,9 @@ let lovedCatPicsList = document.querySelector(".loved-cat-list")
 let catImageID;
 let lovedCats = [];
 
-// console.log(Math.floor(Math.random() * 300000))
 
 const sub_id = `CatLady${Math.floor(Math.random() * 300000)}`;
+console.log(sub_id)
 
 
 // ****************************************************************
@@ -115,24 +114,30 @@ const nopedCat = async (catImageId) => {
 
 const getVotedCats = async () => {
 
-    const catsThatWereLoved = await fetchCatApi(`https://api.thecatapi.com/v1/votes?sub_id=${sub_id}`)
+    const catsThatWereVoted = await fetchCatApi(`https://api.thecatapi.com/v1/votes?sub_id=${sub_id}`)
 
-    catsThatWereLoved.forEach(async (catObject) => {
+    console.log(`############`, catsThatWereVoted)
 
-        const catID = catObject.image_id;
+    const recentCat = catsThatWereVoted.pop()
 
-        const catImageInfo = await fetchCatApi(`https://api.thecatapi.com/v1/images/${catID}`)
+        if (recentCat.value === 1) {
 
-        // console.log('******', catImageInfo)
+            const catID = recentCat.image_id;
 
-        let lovedCatImg = document.createElement("img");
+            const catImageInfo = await fetchCatApi(`https://api.thecatapi.com/v1/images/${catID}`)
 
-        lovedCatImg.setAttribute("src", catImageInfo.url)
-        lovedCatImg.setAttribute("class", "fav-cat")
+            // console.log('******', catImageInfo)
 
-        lovedCatPicsList.appendChild(lovedCatImg)
+            let lovedCatImg = document.createElement("img");
 
-    });
+            lovedCatImg.setAttribute("src", catImageInfo.url)
+            lovedCatImg.setAttribute("class", "fav-cat")
+
+            lovedCatPicsList.appendChild(lovedCatImg)
+
+        } else {
+            console.log(`Cat not loved :( : ${recentCat} `)
+        }
 
 
 }
