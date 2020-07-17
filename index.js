@@ -60,19 +60,26 @@ const fetchCatApi = async (url = "https://api.thecatapi.com/v1/images/search", r
 
 }
 
-
 // ****************************************************************
 //? Utility FUNCTIONS
 // ****************************************************************
 
 const setRandomCat = async () => {
 
-    const apiResponse = await fetchCatApi()
+    // Uses CatApi
+    const apiResponse = await fetchCatApi();
 
     randomCatPic.setAttribute("src", apiResponse[0].url)
 
     catImageID = apiResponse[0].id;
 
+
+    // Uses practice API
+    // const challengeApi = await fetchCatApi("http://localhost:2000/")
+    // console.log("FROM MY API: ", challengeApi.catPicUrl)
+
+    // randomCatPic.setAttribute("src", challengeApi.catPicUrl)
+    // catImageID = apiResponse[0].id;
 
 }
 
@@ -96,12 +103,12 @@ const lovedCat = async (catImageId) => {
         value: 1
     })
 
-    console.log('Your cat vote: ', requestBodyVote)
+    // console.log('Your cat vote: ', requestBodyVote)
 
     await postVoteToCatApi(requestBodyVote)
 
     await setRandomCat()
-    
+
     await getVotedCats();
 
     voteButtons.forEach(bttn => {
@@ -138,7 +145,7 @@ const getVotedCats = async () => {
     const catsThatWereVoted = await fetchCatApi(`https://api.thecatapi.com/v1/votes?sub_id=${sub_id}`)
     // const catsThatWereVoted = await fetchCatApi(`https://api.thecatapi.com/v1/votes`)
 
-    console.log(`############`, catsThatWereVoted)
+    console.log(`Cats that were voted: `, catsThatWereVoted)
 
     const recentCat = catsThatWereVoted.pop()
 
