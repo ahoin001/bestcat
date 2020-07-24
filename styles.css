@@ -30,6 +30,10 @@ img {
   padding: 12px;
 }
 
+.loved-cat-list {
+  list-style-type: none;
+}
+
 /* *********************************** */
 
 .loved-container {

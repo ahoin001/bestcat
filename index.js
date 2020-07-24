@@ -75,7 +75,7 @@ const setRandomCat = async () => {
 
 
     // Uses practice API
-    // const challengeApi = await fetchCatApi("http://localhost:2000/")
+    // const challengeApi = await fetchCatApi("http://localhost:2000/randomcat")
     // console.log("FROM MY API: ", challengeApi.catPicUrl)
 
     // randomCatPic.setAttribute("src", challengeApi.catPicUrl)
